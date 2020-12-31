@@ -1,0 +1,18 @@
+Elastic:
+docker run -d --name es762 -p 9200:9200 -e "discovery.type=single-node" elasticsearch:7.6.2
+
+Redis:
+docker run --name redis_latest -p 6379:6379 -d redis
+docker exec -it redis_latest sh
+# redis-cli
+#127.0.0.1:6379> 
+
+neo4j: 
+docker run -d --name neo4j_latest -p 7668:7687 -p 7474:7474 \
+    -v $HOME/neo4j/data:/data \
+    -v $HOME/neo4j/logs:/logs \
+    -v $HOME/neo4j/import:/var/lib/neo4j/import \
+    -v $HOME/neo4j/plugins:/plugins \
+    --env NEO4J_AUTH=neo4j/test  neo4j:latest 
+
+
