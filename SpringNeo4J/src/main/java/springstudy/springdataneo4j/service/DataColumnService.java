@@ -6,6 +6,8 @@ import springstudy.springdataneo4j.domain.DataColumn;
 import springstudy.springdataneo4j.repository.DataColumnRepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -45,6 +47,9 @@ public class DataColumnService {
         dataColumnRepository.save(a);
     }
 
+    public List<Map<String,Object>> findAllDatasetLineage(){
+        return dataColumnRepository.findDatasetLineage();
+    }
 
     public DataColumn newDataColumnRelationship(DataColumn a, DataColumn b) {
         Optional<DataColumn> a_tmp = dataColumnRepository.findById(a.getId());

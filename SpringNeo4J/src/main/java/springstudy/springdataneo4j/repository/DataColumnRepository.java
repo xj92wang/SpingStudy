@@ -5,6 +5,8 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import springstudy.springdataneo4j.domain.DataColumn;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface DataColumnRepository extends Neo4jRepository<DataColumn, String> {
@@ -21,5 +23,7 @@ public interface DataColumnRepository extends Neo4jRepository<DataColumn, String
     @Query("MATCH p=()-[r:DERIVED]->(m:DataColumn) RETURN p")
     Collection<DataColumn> findAllDerived();
 
+    @Query("match (s:DataColumn)-[r:DERIVED]->(l:DataColumn) return distinct s.datastore as s_datastore,s.dataset as s_dataset,l.datastore as t_datastore,l.dataset as t_dataset")
+    List<Map<String,Object>> findDatasetLineage();
 
 }

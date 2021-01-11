@@ -20,15 +20,17 @@ public class DataColumn {
     private String domain;
     private String dataset;
     private String column;
+    private String datastore;
 
     private DataColumn() {
 
     }
 
-    public DataColumn(String domain, String dataset, String column) {
+    public DataColumn(String domain, String datastore, String dataset, String column) {
         this.column = column;
         this.dataset = dataset;
         this.domain = domain;
+        this.datastore = datastore;
         id = domain + "." + getFullName();
     }
 
@@ -47,13 +49,13 @@ public class DataColumn {
     }
 
     public String getFullName() {
-        return dataset + "." + column;
+        return datastore+ "." + dataset + "." + column;
     }
 
     public String toString() {
-        return getFullName() + "'s derived from =>"
-                + Optional.ofNullable(this.deriveddatacolumnset).orElse(
+        return
+                Optional.ofNullable(this.deriveddatacolumnset).orElse(
                 Collections.emptySet()).stream().map(DataColumn::getFullName)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) + " deriving =>" +getFullName();
     }
 }

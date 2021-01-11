@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import springstudy.springdataneo4j.domain.DataColumn;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @SpringBootTest
@@ -15,36 +17,32 @@ class DataColumnServiceTest {
 
 
     @Test
-    public void testNewDataColumnRelationship() {
-        DataColumn iso = new DataColumn("eapp", "table0", "col1");
-        dataColumnService.saveDataColumn(iso);
-
-        DataColumn a = new DataColumn("eapp", "table1", "col1");
-        DataColumn b = new DataColumn("eapp", "table2", "col2");
-        a = dataColumnService.newDataColumnRelationship(a, b);
-        System.out.println(a);
-    }
-
-    @Test
     public void testNewDataColumnRelationship2() {
 
-        DataColumn a = new DataColumn("eapp", "table1", "col1");
-        DataColumn a1 = new DataColumn("eapp", "table1", "col1_a");
+        DataColumn r1 = new DataColumn("eapp", "raw","account", "r_account_id");
+        DataColumn r2 = new DataColumn("eapp", "raw","account", "r_account_name");
 
-        DataColumn b = new DataColumn("eapp", "table2", "col2");
-        DataColumn c = new DataColumn("eapp", "table3", "col3");
+        DataColumn s1 = new DataColumn("eapp", "sanitized","account", "s_account_id");
+        DataColumn s2 = new DataColumn("eapp", "sanitized","account", "s_account_name");
 
+        dataColumnService.newDataColumnRelationship(s1, r1);
+        dataColumnService.newDataColumnRelationship(s2, r2);
 
-        dataColumnService.newDataColumnRelationship(a1, b);
-        dataColumnService.newDataColumnRelationship(a, b);
-        dataColumnService.newDataColumnRelationship(b, c);
+        DataColumn c1 = new DataColumn("eapp", "curated","account", "c_account_id");
+        DataColumn c2 = new DataColumn("eapp", "curated","account", "c_account_name");
+        DataColumn c3 = new DataColumn("eapp", "curated","account", "c_account_name_id");
+
+        dataColumnService.newDataColumnRelationship(c1, s1);
+        dataColumnService.newDataColumnRelationship(c2, s2);
+        dataColumnService.newDataColumnRelationship(c3, s1);
+        dataColumnService.newDataColumnRelationship(c3, s2);
 
     }
 
 
     @Test
     public void testSearchParentDataColumnByColumn() {
-        Collection<DataColumn> li = dataColumnService.findDerivedByColumn("col1_a");
+        Collection<DataColumn> li = dataColumnService.findDerivedByColumn("c_account_name_id");
         for (DataColumn d : li) {
             System.out.println(d);
         }
@@ -53,7 +51,7 @@ class DataColumnServiceTest {
 
     @Test
     public void testSearchChildrenDataColumnByColumn() {
-        Collection<DataColumn> li = dataColumnService.findImpactedByColumn("col3");
+        Collection<DataColumn> li = dataColumnService.findImpactedByColumn("r_account_id");
         for (DataColumn d : li) {
             System.out.println(d);
         }
@@ -61,7 +59,7 @@ class DataColumnServiceTest {
 
     @Test
     public void testFindDataColumnByColumn() {
-        Collection<DataColumn> li = dataColumnService.findByColumn("col1");
+        Collection<DataColumn> li = dataColumnService.findByColumn("account");
         for (DataColumn d : li) {
             System.out.println(d);
         }
@@ -76,7 +74,7 @@ class DataColumnServiceTest {
     }
     @Test
     public void testFindDataColumn() {
-        Optional<DataColumn> a = dataColumnService.findDataColumn("eapp.table1.col1");
+        Optional<DataColumn> a = dataColumnService.findDataColumn("eapp.curated.account.c_account_name_id");
         System.out.println(a.get());
     }
 
@@ -85,6 +83,14 @@ class DataColumnServiceTest {
         Iterable<DataColumn> li = dataColumnService.findAll();
         for (DataColumn d : li) {
             System.out.println(d);
+        }
+
+    }
+
+    @Test void testFindAllDataStoreLineage(){
+        List<Map<String, Object>> li = dataColumnService.findAllDatasetLineage();
+        for (Map<String,Object> d : li) {
+            System.out.println(d.get("s_datastore")+"."+d.get("s_dataset")+"->"+d.get("t_datastore")+"."+ d.get("t_dataset"));
         }
 
     }
